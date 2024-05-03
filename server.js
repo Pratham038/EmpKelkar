@@ -13,9 +13,12 @@ app.use(express.json()); // Parse JSON bodies
 
 // Define routes
 const empRoutes = require("./src/routes/empRoutes");
+const userRoutes = require("./src/User/userRoutes");
+const authMiddleware = require("./src/middleware/middleware");
 
 // Route middleware
 app.use("/api", empRoutes);
+app.use("/api", userRoutes);
 
 //connect to db
 mongoose

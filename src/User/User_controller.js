@@ -72,7 +72,25 @@ const login = async (req, res) => {
   }
 };
 
+const getUserProfile = async (req, res) => {
+  try {
+    // Fetch user information based on the user ID extracted from the token
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Send success response with user information
+    res.status(200).json({ user });
+  } catch (error) {
+    // Handle error
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 module.exports = {
   registerUser,
   login,
+  getUserProfile,
 };
