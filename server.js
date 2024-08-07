@@ -14,11 +14,13 @@ app.use(express.json()); // Parse JSON bodies
 // Define routes
 const empRoutes = require("./src/routes/empRoutes");
 const userRoutes = require("./src/User/userRoutes");
-const authMiddleware = require("./src/middleware/middleware");
+const productRoutes = require("./src/Product/product_route");
+const authUserMiddleware = require("./src/middleware/middleware");
 
 // Route middleware
 app.use("/api", empRoutes);
 app.use("/api", userRoutes);
+app.use("/api", productRoutes);
 
 //connect to db
 mongoose
@@ -31,6 +33,9 @@ mongoose
   });
 
 // Start server
+app.get("/", (req, res) => {
+  res.send({ "Project Name": " Emp Management System" });
+});
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -37,7 +37,38 @@ const registerUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id; // Assuming you pass user id in the request parameters
+    const { username, email, password } = req.body;
 
+    // Find the user by ID
+    let user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Update user fields if they are provided in the request body
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    // Save the updated user
+    user = await user.save();
+
+    // Send success response
+    res
+      .status(200)
+      .json({ message: "User updated successfully.", user, success: true });
+  } catch (error) {
+    // Handle error
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -62,9 +93,12 @@ const login = async (req, res) => {
     );
 
     // Send success response with the token and user ID
-    res
-      .status(200)
-      .json({ message: "Login successful.", token, userId: user._id });
+    res.status(200).json({
+      message: "Login successful.",
+      token,
+      userId: user._id,
+      success: true,
+    });
   } catch (error) {
     // Handle error
     console.error("Error logging in:", error);
@@ -81,7 +115,7 @@ const getUserProfile = async (req, res) => {
     }
 
     // Send success response with user information
-    res.status(200).json({ user });
+    res.status(200).json({ user, success: true });
   } catch (error) {
     // Handle error
     console.error("Error fetching user profile:", error);
