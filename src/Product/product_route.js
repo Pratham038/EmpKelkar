@@ -13,7 +13,7 @@ router.get("/products", async (req, res) => {
   let product_Data = [];
   try {
     // Make a request to the external API to get the products
-    const response = await axios.get(EXTERNAL_API_URL, { timeout: 5000 }); // Set a 5-second timeout
+    const response = await axios.get(EXTERNAL_API_URL, { timeout: 20000 }); // Set a 5-second timeout
     console.log(
       "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     );
