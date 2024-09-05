@@ -6,20 +6,26 @@ const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 600 });
 
 // URL of the external mock API
+
 const EXTERNAL_API_URL = "https://fakestoreapi.com/products";
 
 router.get("/products", async (req, res) => {
+  let product_Data = [];
   try {
     // Make a request to the external API to get the products
-    const response = await axios.get(EXTERNAL_API_URL);
+    const response = await axios.get(EXTERNAL_API_URL, { timeout: 5000 }); // Set a 5-second timeout
+    console.log(
+      "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    );
+    console.log(response.data); // Log the response data instead of the entire response
 
     // Extract the data from the response
-    const product_Data = response.data;
+    product_Data = response.data;
 
     // Send the product data in the response with a success flag
     res.status(200).json({ success: true, product_Data });
   } catch (error) {
-    console.error("Error fetching product data:", error);
+    console.error("Error fetching product data:", error.message); // Log the error message
     res.status(500).json({ success: false, message: "Internal server error." });
   }
 });
@@ -96,12 +102,10 @@ router.get("/by_category/:category", async (req, res) => {
         .json({ success: false, message: error.response.data });
     } else if (error.request) {
       // No response received from the server
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "No response received from external API.",
-        });
+      res.status(500).json({
+        success: false,
+        message: "No response received from external API.",
+      });
     } else {
       // Error setting up the request
       res
